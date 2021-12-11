@@ -1,5 +1,6 @@
 package activity;
 
+import domain.Customer;
 import io.temporal.activity.ActivityInterface;
 import io.temporal.activity.ActivityMethod;
 

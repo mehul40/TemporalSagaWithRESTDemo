@@ -1,7 +1,10 @@
 package activity;
 
 
+import domain.Customer;
 import org.springframework.beans.factory.annotation.Autowired;
+import repository.CustomerRepository;
+import repository.TransactionHistoryRepository;
 
 import java.math.BigDecimal;
 
@@ -37,8 +40,4 @@ public class MoneyTransferActivityImpl implements  MoneyTransferActivity{
     public void registerFailedTransaction(long senderAcctNum, long receiverAcctNum, BigDecimal amount) {
 
     }
-
-
-
-
 }
