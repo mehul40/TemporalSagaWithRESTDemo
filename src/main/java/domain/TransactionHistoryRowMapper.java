@@ -11,7 +11,7 @@ public class TransactionHistoryRowMapper implements RowMapper<TransactionHistory
     @Override
     public TransactionHistory mapRow(ResultSet rs, int rowNum) throws SQLException {
         TransactionHistory transactionHistory = new TransactionHistory();
-        transactionHistory.setCutomerid(rs.getLong("customerid"));
+        transactionHistory.setCustomerid(rs.getLong("customerid"));
         transactionHistory.setName(rs.getString("name"));
         transactionHistory.setBalance(rs.getBigDecimal("balance"));
         transactionHistory.setUpdate_timestamp(rs.getTimestamp("update_timestamp").toInstant());

@@ -13,7 +13,7 @@ import java.time.Instant;
 @AllArgsConstructor
 @Component
 public class TransactionHistory {
-    private long cutomerid;
+    private long customerid;
     private String name;
     private BigDecimal balance;
     private Instant update_timestamp;
