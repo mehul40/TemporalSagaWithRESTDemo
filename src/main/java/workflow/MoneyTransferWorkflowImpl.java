@@ -87,7 +87,7 @@ public class MoneyTransferWorkflowImpl implements MoneyTransferWorkflow {
     @Override
     public void signalCustomerActivityRegistered(long senderAcctNum, long receiverAcctNum, BigDecimal amount) {
         if(this.isCustomerActivityRegistered == true) {
-            System.out.println("Customer activity was already registered. No further action required.")
+            System.out.println("Customer activity was already registered. No further action required.");
             return;
         }
         try {
