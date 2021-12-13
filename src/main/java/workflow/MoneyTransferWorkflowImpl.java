@@ -64,7 +64,23 @@ public class MoneyTransferWorkflowImpl implements MoneyTransferWorkflow {
             return;
         }
         try {
-            Customer sender = moneyTransferActivity.
+            Customer sender = moneyTransferActivity.getCustomerAccountDetails(senderAcctNum);
+            senderAcct.setCustomerid(sender.getCustomerid());
+            senderAcct.setCustomer_name(sender.getCustomer_name());
+            senderAcct.setBalance(sender.getBalance());
+            senderAcct.setUpdate_date(sender.getUpdate_date());
+
+            Customer receiver = moneyTransferActivity.getCustomerAccountDetails(receiverAcctNum);
+            receiverAcct.setCustomerid(receiver.getCustomerid());
+            receiverAcct.setCustomer_name(receiver.getCustomer_name());
+            receiverAcct.setBalance(receiver.getBalance());
+            receiverAcct.setUpdate_date(receiver.getUpdate_date());
+
+            isBackupCompleted = true;
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+            throw e;
         }
     }
 
