@@ -15,6 +15,7 @@ public class TransactionHistoryRowMapper implements RowMapper<TransactionHistory
         transactionHistory.setName(rs.getString("name"));
         transactionHistory.setBalance(rs.getBigDecimal("balance"));
         transactionHistory.setUpdate_timestamp(rs.getTimestamp("update_timestamp").toInstant());
+        transactionHistory.setActivity(rs.getString("activity"));
         return transactionHistory;
     }
 }
