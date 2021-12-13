@@ -1,5 +1,6 @@
-package domain;
+package com.example.domain;
 
+import com.example.domain.TransactionHistory;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 

@@ -1,9 +1,10 @@
-package workflow;
+package com.example.workflow;
 
 
-import activity.MoneyTransferActivity;
+import com.example.activity.MoneyTransferActivity;
+import com.example.workflow.MoneyTransferWorkflow;
 import com.google.common.base.Throwables;
-import domain.Customer;
+import com.example.domain.Customer;
 import io.temporal.activity.ActivityOptions;
 import io.temporal.client.WorkflowException;
 import io.temporal.common.RetryOptions;

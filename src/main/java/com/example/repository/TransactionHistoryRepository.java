@@ -1,6 +1,5 @@
-package repository;
+package com.example.repository;
 
-import domain.TransactionHistory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 

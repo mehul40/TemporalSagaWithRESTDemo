@@ -1,6 +1,6 @@
-package repository;
+package com.example.repository;
 
-import domain.Customer;
+import com.example.domain.Customer;
 import org.springframework.data.cassandra.repository.AllowFiltering;
 import org.springframework.data.cassandra.repository.CassandraRepository;
 import org.springframework.stereotype.Repository;

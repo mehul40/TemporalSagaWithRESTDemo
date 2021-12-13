@@ -1,6 +1,6 @@
-package activity;
+package com.example.activity;
 
-import domain.Customer;
+import com.example.domain.Customer;
 import io.temporal.activity.ActivityInterface;
 import io.temporal.activity.ActivityMethod;
 

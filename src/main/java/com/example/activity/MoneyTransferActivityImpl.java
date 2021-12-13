@@ -1,17 +1,17 @@
-package activity;
+package com.example.activity;
 
 
-import domain.Customer;
+import com.example.domain.Customer;
 import io.temporal.activity.Activity;
 import io.temporal.workflow.Saga;
 import org.springframework.beans.factory.annotation.Autowired;
-import repository.CustomerRepository;
-import repository.TransactionHistoryRepository;
+import com.example.repository.CustomerRepository;
+import com.example.repository.TransactionHistoryRepository;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-public class MoneyTransferActivityImpl implements  MoneyTransferActivity{
+public class MoneyTransferActivityImpl implements MoneyTransferActivity {
 
     @Autowired
     TransactionHistoryRepository transactionHistoryRepository;

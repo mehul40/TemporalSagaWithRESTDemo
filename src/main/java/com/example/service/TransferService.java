@@ -1,4 +1,4 @@
-package service;
+package com.example.service;
 
 import com.google.common.base.Throwables;
 import io.temporal.client.WorkflowClient;
@@ -8,7 +8,7 @@ import io.temporal.failure.ApplicationFailure;
 import io.temporal.serviceclient.WorkflowServiceStubs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import workflow.MoneyTransferWorkflow;
+import com.example.workflow.MoneyTransferWorkflow;
 
 import java.math.BigDecimal;
 

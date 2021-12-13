@@ -1,13 +1,10 @@
-import activity.MoneyTransferActivity;
-import io.temporal.client.WorkflowClient;
-import io.temporal.serviceclient.WorkflowServiceStubs;
+import com.example.activity.MoneyTransferActivity;
 import io.temporal.worker.Worker;
 import io.temporal.worker.WorkerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
-import workflow.MoneyTransferWorkflow;
-import workflow.MoneyTransferWorkflowImpl;
+import com.example.workflow.MoneyTransferWorkflowImpl;
 
 
 @SpringBootApplication
