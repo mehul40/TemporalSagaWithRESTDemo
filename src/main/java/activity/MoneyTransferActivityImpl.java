@@ -3,6 +3,7 @@ package activity;
 
 import domain.Customer;
 import io.temporal.activity.Activity;
+import io.temporal.workflow.Saga;
 import org.springframework.beans.factory.annotation.Autowired;
 import repository.CustomerRepository;
 import repository.TransactionHistoryRepository;
@@ -20,6 +21,20 @@ public class MoneyTransferActivityImpl implements  MoneyTransferActivity{
 
     @Override
     public void cancelTransfer(Customer sender, Customer receiver) {
+        System.out.println("Cancel Transfer");
+        try {
+            System.out.println("Rollback changes for " + sender.getCustomerid());
+            customerRepository.save(sender);
+            System.out.println("Rollback changes for " + receiver.getCustomerid());
+            customerRepository.save(receiver);
+        }
+        catch(Saga.CompensationException sce) {
+            System.out.println("Compensation Exception received.");
+            throw Activity.wrap(sce);
+        }
+        catch(Exception e) {
+            throw Activity.wrap(e);
+        }
 
     }
 
@@ -30,7 +45,24 @@ public class MoneyTransferActivityImpl implements  MoneyTransferActivity{
 
     @Override
     public void registerTransactionActivity(long senderAcctNum, long receiverAcctNum, BigDecimal amount) {
+        try {
+            List<Customer> customers = customerRepository.findByCustomerid(senderAcctNum);
+            Customer sender = customers.get(0);
+            System.out.println("Sender amount:" + sender.getBalance());
 
+            customers = customerRepository.findByCustomerid(receiverAcctNum);
+            Customer receiver = customers.get(0);
+
+            String cActivity = "Sent " + amount.doubleValue() + " to " + receiver.getCustomerid() + "-" + receiver.getCustomer_name();
+            transactionHistoryRepository.insertTransaction(senderAcctNum, sender.getCustomer_name(), amount, cActivity);
+
+            cActivity = "Received " + amount.doubleValue() + " from " + sender.getCustomerid() + "-" + sender.getCustomer_name();
+            transactionHistoryRepository.insertTransaction(receiverAcctNum, receiver.getCustomer_name(), amount, cActivity);
+        }
+        catch(Exception e) {
+            System.out.println(e.getMessage());
+            throw e;
+        }
     }
 
     @Override
@@ -57,6 +89,8 @@ public class MoneyTransferActivityImpl implements  MoneyTransferActivity{
 
     @Override
     public void registerFailedTransaction(long senderAcctNum, long receiverAcctNum, BigDecimal amount) {
-
+        try {
+            System.out.println("Register failed activity")
+        }
     }
 }
