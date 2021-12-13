@@ -1,3 +1,5 @@
+package com.example;
+
 import com.example.activity.MoneyTransferActivity;
 import io.temporal.worker.Worker;
 import io.temporal.worker.WorkerFactory;
