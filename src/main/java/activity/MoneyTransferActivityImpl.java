@@ -90,7 +90,23 @@ public class MoneyTransferActivityImpl implements  MoneyTransferActivity{
     @Override
     public void registerFailedTransaction(long senderAcctNum, long receiverAcctNum, BigDecimal amount) {
         try {
-            System.out.println("Register failed activity")
+            System.out.println("Register failed activity");
+
+            Customer sender = customerRepository.findByCustomerid(senderAcctNum).get(0);
+            Customer receiver = customerRepository.findByCustomerid(receiverAcctNum).get(0);
+
+            String cActivity = "Cancelled transaction to send " + amount.doubleValue() + " to " + receiverAcctNum;
+            transactionHistoryRepository.insertTransaction(senderAcctNum, sender.getCustomer_name(), amount, cActivity );
+
+            cActivity = "Rolled back transaction due to failure " + amount.doubleValue() + " from " + sender.getCustomerid() + " - " + sender.getCustomer_name();
+            transactionHistoryRepository.insertTransaction(receiverAcctNum, receiver.getCustomer_name(), amount, cActivity);
+        }
+        catch(Saga.CompensationException sce) {
+            System.out.println("Compensation Exception received.");
+            throw sce;
+        }
+        catch(Exception e) {
+            throw Activity.wrap(e);
         }
     }
 }
