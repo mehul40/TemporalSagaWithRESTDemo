@@ -20,12 +20,12 @@ public class TransactionController {
 
     @PostMapping("/transfer")
     public void tranferMoney(@RequestBody TransferRequest request) {
-
+        transferService.transferMoney(request.getSenderAcctNum(), request.getReceiverAcctNum(), request.getAmount());
     }
 
     @PostMapping("/completeTransaction")
     public void completeTransaction(@RequestBody TransferRequest request) {
-
+        transferService.completeTransaction(request.getSenderAcctNum(), request.getReceiverAcctNum());
     }
 }
 

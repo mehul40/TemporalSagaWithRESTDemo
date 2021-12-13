@@ -2,9 +2,13 @@ package workflow;
 
 
 import activity.MoneyTransferActivity;
+import com.google.common.base.Throwables;
 import domain.Customer;
 import io.temporal.activity.ActivityOptions;
+import io.temporal.client.WorkflowException;
 import io.temporal.common.RetryOptions;
+import io.temporal.failure.ActivityFailure;
+import io.temporal.failure.ApplicationFailure;
 import io.temporal.workflow.Saga;
 import io.temporal.workflow.Workflow;
 
@@ -56,22 +60,88 @@ public class MoneyTransferWorkflowImpl implements MoneyTransferWorkflow {
 
     @Override
     public void signalBackupCompleted(long senderAcctNum, long receiverAcctNum) {
-
+        if(this.isBackupCompleted == true) {
+            return;
+        }
+        try {
+            Customer sender = moneyTransferActivity.
+        }
     }
 
     @Override
     public void signalCustomerActivityRegistered(long senderAcctNum, long receiverAcctNum, BigDecimal amount) {
+        if(this.isCustomerActivityRegistered == true) {
+            System.out.println("Customer activity was already registered. No further action required.")
+            return;
+        }
+        try {
+            saga.addCompensation(moneyTransferActivity::registerFailedTransaction, senderAcctNum, receiverAcctNum, amount);
+            moneyTransferActivity.registerTransactionActivity(senderAcctNum, receiverAcctNum, amount);
+            this.isCustomerActivityRegistered = true;
+            System.out.println("Signal - Customer activity registered.");
 
+        }
+        catch(ActivityFailure e) {
+            System.out.println("Failed to register customer activity. Execute saga compensation.");
+            saga.compensate();
+            throw e;
+        }
+        catch(ApplicationFailure ex) {
+            System.out.println("Application Failure.");
+            throw ex;
+        }
+        catch(WorkflowException we) {
+            System.out.println("\n Stack Trace \n" + Throwables.getStackTraceAsString(we));
+            Throwable cause = Throwables.getRootCause(we);
+            System.out.println("\n Root cause: " + cause.getMessage());
+            throw we;
+        }
+        catch(Exception ge) {
+            ge.printStackTrace();
+            throw ge;
+        }
     }
 
     @Override
     public void signalTransferCompleted(long senderAcctNum, long receiverAcctNum, BigDecimal amount) {
-
+        if(this.isTransferCompleted == true) {
+            System.out.println("Transfer was already completed. No further action required.");
+        }
+        try {
+            saga.addCompensation(moneyTransferActivity::cancelTransfer, senderAcct, receiverAcct);
+            moneyTransferActivity.initiateTransfer(senderAcctNum, receiverAcctNum, amount);
+            this.isTransferCompleted = true;
+            System.out.println("Signal - Transfer completed.");
+        }
+        catch(ActivityFailure e) {
+            System.out.println("Failed to transfer money. Execute saga compensation.");
+            saga.compensate();
+            throw e;
+        }
+        catch(ApplicationFailure ex) {
+            System.out.println("Application Failure.");
+            throw ex;
+        }
+        catch(WorkflowException we) {
+            System.out.println("\n Stack Trace \n" + Throwables.getStackTraceAsString(we));
+            Throwable cause = Throwables.getRootCause(we);
+            System.out.println("\n Root cause: " + cause.getMessage());
+            throw we;
+        }
+        catch(Exception ge) {
+            ge.printStackTrace();
+            throw ge;
+        }
     }
 
     @Override
     public void signalTransactionCompleted(long senderAcctNum, long receiverAcctNum) {
-
+        if(this.isBackupCompleted && this.isTransferCompleted && this.isCustomerActivityRegistered) {
+            System.out.println("Signal - Transaction Completed for " + senderAcctNum + "_" + receiverAcctNum);
+            this.isTransferCompleted = true;
+        } else {
+            System.out.println("Transfer has not completed yet.");
+        }
     }
 
 
