@@ -1,5 +1,6 @@
 package com.example.config;
 
+import com.example.activity.MoneyTransferActivityImpl;
 import com.example.workflow.MoneyTransferWorkflowImpl;
 import io.temporal.client.WorkflowClient;
 import io.temporal.client.WorkflowClientOptions;
@@ -38,7 +39,7 @@ public class TemporalConfig {
     }
 
     @Bean
-    public MoneyTransferWorkflowImpl MoneyTransferActivity() {
-        return new MoneyTransferWorkflowImpl();
+    public MoneyTransferActivityImpl MoneyTransferActivity() {
+        return new MoneyTransferActivityImpl();
     }
 }
