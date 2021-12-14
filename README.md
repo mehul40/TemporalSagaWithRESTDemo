@@ -51,6 +51,13 @@ $docker exec -it <Cassandra container ID> /bin/bash
 cqlsh> create keyspace if not exists account with replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
 cqlsh> create table if not exists account.customer(customerid bigint PRIMARY KEY, customer_name text, balance double, update_date timestamp);
 
+Insert some records.
+
+cqlsh> insert into account.customer(customerid, customer_name, balance, update_date) values(1, 'CUSTOMER-1', 70000.00, '2021-12-14');
+cqlsh> insert into account.customer(customerid, customer_name, balance, update_date) values(2, 'CUSTOMER-2', 70000.00, '2021-12-14');
+cqlsh> insert into account.customer(customerid, customer_name, balance, update_date) values(3, 'CUSTOMER-3', 70000.00, '2021-12-14');
+
+
 Now execute TemporalSagaWithRESTDemo.jar and test using curl or postman.
 
 1. Start transaction
