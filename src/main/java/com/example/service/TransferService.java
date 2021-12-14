@@ -70,6 +70,26 @@ public class TransferService {
             ge.printStackTrace();
             throw ge;
         }
+
+        MoneyTransferWorkflow registerActivityWorkflow = workflowClient.newWorkflowStub(MoneyTransferWorkflow.class, "MoneyTransfer_" + senderAcctNum + "_" + receiverAcctNum);
+        try {
+            registerActivityWorkflow.signalCustomerActivityRegistered(senderAcctNum, receiverAcctNum, amount);
+        }
+        catch(ApplicationFailure ex) {
+            System.out.println("Application Failure");
+            throw ex;
+        }
+        catch(WorkflowException we) {
+            System.out.println("\n Stack Trace:\n" + Throwables.getStackTraceAsString(we));
+            Throwable cause = Throwables.getRootCause(we);
+            System.out.println("\n Root cuase: " + cause.getMessage());
+            throw we;
+        }
+        catch(Exception ge) {
+            ge.printStackTrace();
+            throw ge;
+        }
+
     }
 
     public MoneyTransferWorkflow createWorkflowConnection(long senderAcctNum, long receiverAcctNum) {

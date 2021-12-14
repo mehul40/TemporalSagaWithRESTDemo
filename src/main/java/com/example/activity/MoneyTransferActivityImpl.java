@@ -40,7 +40,7 @@ public class MoneyTransferActivityImpl implements MoneyTransferActivity {
 
     @Override
     public Customer getCustomerAccountDetails(long customerAcctNum) {
-        return null;
+        return customerRepository.findByCustomerid(customerAcctNum).get(0);
     }
 
     @Override

@@ -1,8 +1,8 @@
 temporal:
-  serviceAddress: localhost:7233
+  serviceAddress: "localhost:7233"
   namespace: "poc"
 server:
-  port: 9050
+  port: 9070
 
 logging:
   level:

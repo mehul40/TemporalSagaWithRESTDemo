@@ -1,6 +1,7 @@
 package com.example;
 
 import com.example.activity.MoneyTransferActivity;
+import com.example.workflow.MoneyTransferWorkflow;
 import io.temporal.worker.Worker;
 import io.temporal.worker.WorkerFactory;
 import org.springframework.boot.SpringApplication;
@@ -15,7 +16,7 @@ public class TemporalSagaWithRESTDemoApp {
         ConfigurableApplicationContext applicationContext = SpringApplication.run(TemporalSagaWithRESTDemoApp.class, args);
         WorkerFactory factory = applicationContext.getBean(WorkerFactory.class);
         MoneyTransferActivity moneyTransferActivity = applicationContext.getBean(MoneyTransferActivity.class);
-        Worker worker = factory.newWorker(MoneyTransferWorkflowImpl.QUEUE_NAME);
+        Worker worker = factory.newWorker(MoneyTransferWorkflow.QUEUE_NAME);
         worker.registerWorkflowImplementationTypes(MoneyTransferWorkflowImpl.class);
         worker.registerActivitiesImplementations(moneyTransferActivity);
         factory.start();

@@ -14,7 +14,7 @@ public class TransactionHistoryRepository {
     }
 
     public void insertTransaction(long customerId, String name, BigDecimal amount, String activity) {
-        String sql = "INSERT INTO transactionhistory(customerId, name, amount, update_timestamp, activity) VALUES(?,?,?,CURRENT_TIMESTAMP,?)";
+        String sql = "INSERT INTO transactionhistory(customerid, name, balance, update_timestamp, activity) VALUES(?,?,?,CURRENT_TIMESTAMP,?)";
         jdbcTemplate.update(sql, customerId, name, amount, activity);
     }
 }

@@ -61,7 +61,9 @@ public class MoneyTransferWorkflowImpl implements MoneyTransferWorkflow {
 
     @Override
     public void signalBackupCompleted(long senderAcctNum, long receiverAcctNum) {
+
         if(this.isBackupCompleted == true) {
+            System.out.println("Backup was already taken.");
             return;
         }
         try {
@@ -123,6 +125,7 @@ public class MoneyTransferWorkflowImpl implements MoneyTransferWorkflow {
     public void signalTransferCompleted(long senderAcctNum, long receiverAcctNum, BigDecimal amount) {
         if(this.isTransferCompleted == true) {
             System.out.println("Transfer was already completed. No further action required.");
+            return;
         }
         try {
             saga.addCompensation(moneyTransferActivity::cancelTransfer, senderAcct, receiverAcct);
@@ -153,12 +156,13 @@ public class MoneyTransferWorkflowImpl implements MoneyTransferWorkflow {
 
     @Override
     public void signalTransactionCompleted(long senderAcctNum, long receiverAcctNum) {
-        if(this.isBackupCompleted && this.isTransferCompleted && this.isCustomerActivityRegistered) {
+       if(this.isBackupCompleted && this.isTransferCompleted && this.isCustomerActivityRegistered) {
             System.out.println("Signal - Transaction Completed for " + senderAcctNum + "_" + receiverAcctNum);
-            this.isTransferCompleted = true;
+            this.isTransactionCompleted = true;
         } else {
             System.out.println("Transfer has not completed yet.");
         }
+
     }
 
 
