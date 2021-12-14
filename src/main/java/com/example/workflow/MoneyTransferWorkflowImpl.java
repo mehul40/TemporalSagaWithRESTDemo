@@ -18,7 +18,7 @@ import java.time.Duration;
 
 public class MoneyTransferWorkflowImpl implements MoneyTransferWorkflow {
 
-    private final RetryOptions retryOptions = RetryOptions.newBuilder().setMaximumAttempts(1).build();
+    private final RetryOptions retryOptions = RetryOptions.newBuilder().setMaximumAttempts(10).build();
 
     private final ActivityOptions defaultActivityOptions = ActivityOptions.newBuilder().setStartToCloseTimeout(Duration.ofSeconds(120)).setRetryOptions(retryOptions).build();
 
@@ -73,12 +73,15 @@ public class MoneyTransferWorkflowImpl implements MoneyTransferWorkflow {
             senderAcct.setBalance(sender.getBalance());
             senderAcct.setUpdate_date(sender.getUpdate_date());
 
+            System.out.println("Sender Balance during Backup: " + senderAcct.getBalance());
+
             Customer receiver = moneyTransferActivity.getCustomerAccountDetails(receiverAcctNum);
             receiverAcct.setCustomerid(receiver.getCustomerid());
             receiverAcct.setCustomer_name(receiver.getCustomer_name());
             receiverAcct.setBalance(receiver.getBalance());
             receiverAcct.setUpdate_date(receiver.getUpdate_date());
 
+            System.out.println("Receiver Balance during Backup: " + receiverAcct.getBalance());
             isBackupCompleted = true;
         }
         catch(Exception e) {

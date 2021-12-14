@@ -24,8 +24,10 @@ public class MoneyTransferActivityImpl implements MoneyTransferActivity {
         System.out.println("Cancel Transfer");
         try {
             System.out.println("Rollback changes for " + sender.getCustomerid());
+            System.out.println("Sender balance rolled back to : " + sender.getBalance());
             customerRepository.save(sender);
             System.out.println("Rollback changes for " + receiver.getCustomerid());
+            System.out.println("Receiver balance rolled back to : " + receiver.getBalance());
             customerRepository.save(receiver);
         }
         catch(Saga.CompensationException sce) {
@@ -53,10 +55,10 @@ public class MoneyTransferActivityImpl implements MoneyTransferActivity {
             customers = customerRepository.findByCustomerid(receiverAcctNum);
             Customer receiver = customers.get(0);
 
-            String cActivity = "Sent " + amount.doubleValue() + " to " + receiver.getCustomerid() + " , " + receiver.getCustomer_name();
+            String cActivity = "Sent " + amount.doubleValue() + " to " + receiver.getCustomerid() + " [ " + receiver.getCustomer_name() + " ] ";
             transactionHistoryRepository.insertTransaction(senderAcctNum, sender.getCustomer_name(), sender.getBalance() , cActivity);
 
-            cActivity = "Received " + amount.doubleValue() + " from " + sender.getCustomerid() + " , " + sender.getCustomer_name();
+            cActivity = "Received " + amount.doubleValue() + " from " + sender.getCustomerid() + " [ " + sender.getCustomer_name() + " ] ";
             transactionHistoryRepository.insertTransaction(receiverAcctNum, receiver.getCustomer_name(), receiver.getBalance(), cActivity);
         }
         catch(Exception e) {
