@@ -44,29 +44,9 @@ public class MoneyTransferWorkflowImpl implements MoneyTransferWorkflow {
 
 
     @Override
-    public void startMoneyTransferWorkflow(long senderAcctNum, long receiverAcctNum) {
+    public void startMoneyTransferWorkflow(long senderAcctNum, long receiverAcctNum, BigDecimal amount) {
         try {
             Workflow.await( () -> this.isBackupCompleted);
-
-            Workflow.await( () -> this.isTransferCompleted);
-
-            Workflow.await( () -> this.isCustomerActivityRegistered);
-
-            Workflow.await( () -> this.isTransactionCompleted);
-        }
-        catch(Exception e) {
-            throw e;
-        }
-    }
-
-    @Override
-    public void signalBackupCompleted(long senderAcctNum, long receiverAcctNum) {
-
-        if(this.isBackupCompleted == true) {
-            System.out.println("Backup was already taken.");
-            return;
-        }
-        try {
             Customer sender = moneyTransferActivity.getCustomerAccountDetails(senderAcctNum);
             senderAcct.setCustomerid(sender.getCustomerid());
             senderAcct.setCustomer_name(sender.getCustomer_name());
@@ -82,12 +62,76 @@ public class MoneyTransferWorkflowImpl implements MoneyTransferWorkflow {
             receiverAcct.setUpdate_date(receiver.getUpdate_date());
 
             System.out.println("Receiver Balance during Backup: " + receiverAcct.getBalance());
-            isBackupCompleted = true;
+
+            Workflow.await( () -> this.isTransferCompleted);
+            saga.addCompensation(moneyTransferActivity::cancelTransfer, senderAcct, receiverAcct);
+            try {
+                moneyTransferActivity.initiateTransfer(senderAcctNum, receiverAcctNum, amount);
+                this.isTransferCompleted = true;
+                System.out.println("Signal - Transfer completed.");
+            }
+            catch(ActivityFailure e) {
+                System.out.println("Failed to transfer money. Execute saga compensation.");
+                saga.compensate();
+                throw e;
+            }
+            catch(ApplicationFailure ex) {
+                System.out.println("Application Failure.");
+                throw ex;
+            }
+            catch(WorkflowException we) {
+                System.out.println("\n Stack Trace \n" + Throwables.getStackTraceAsString(we));
+                Throwable cause = Throwables.getRootCause(we);
+                System.out.println("\n Root cause: " + cause.getMessage());
+                throw we;
+            }
+            catch(Exception ge) {
+                ge.printStackTrace();
+                throw ge;
+            }
+
+            Workflow.await( () -> this.isCustomerActivityRegistered);
+            saga.addCompensation(moneyTransferActivity::registerFailedTransaction, senderAcctNum, receiverAcctNum, amount);
+            try {
+                moneyTransferActivity.registerTransactionActivity(senderAcctNum, receiverAcctNum, amount);
+                this.isCustomerActivityRegistered = true;
+                System.out.println("Signal - Customer activity registered.");
+
+            }
+            catch(ActivityFailure e) {
+                System.out.println("Failed to register customer activity. Execute saga compensation.");
+                saga.compensate();
+                throw e;
+            }
+            catch(ApplicationFailure ex) {
+                System.out.println("Application Failure.");
+                throw ex;
+            }
+            catch(WorkflowException we) {
+                System.out.println("\n Stack Trace \n" + Throwables.getStackTraceAsString(we));
+                Throwable cause = Throwables.getRootCause(we);
+                System.out.println("\n Root cause: " + cause.getMessage());
+                throw we;
+            }
+            catch(Exception ge) {
+                ge.printStackTrace();
+                throw ge;
+            }
+
+            Workflow.await( () -> this.isTransactionCompleted);
         }
         catch(Exception e) {
-            e.printStackTrace();
             throw e;
         }
+    }
+
+    @Override
+    public void signalBackupCompleted(long senderAcctNum, long receiverAcctNum) {
+        if(this.isBackupCompleted == true) {
+            System.out.println("Backup was already taken.");
+            return;
+        }
+        isBackupCompleted = true;
     }
 
     @Override
@@ -96,32 +140,7 @@ public class MoneyTransferWorkflowImpl implements MoneyTransferWorkflow {
             System.out.println("Customer activity was already registered. No further action required.");
             return;
         }
-        try {
-            saga.addCompensation(moneyTransferActivity::registerFailedTransaction, senderAcctNum, receiverAcctNum, amount);
-            moneyTransferActivity.registerTransactionActivity(senderAcctNum, receiverAcctNum, amount);
-            this.isCustomerActivityRegistered = true;
-            System.out.println("Signal - Customer activity registered.");
-
-        }
-        catch(ActivityFailure e) {
-            System.out.println("Failed to register customer activity. Execute saga compensation.");
-            saga.compensate();
-            throw e;
-        }
-        catch(ApplicationFailure ex) {
-            System.out.println("Application Failure.");
-            throw ex;
-        }
-        catch(WorkflowException we) {
-            System.out.println("\n Stack Trace \n" + Throwables.getStackTraceAsString(we));
-            Throwable cause = Throwables.getRootCause(we);
-            System.out.println("\n Root cause: " + cause.getMessage());
-            throw we;
-        }
-        catch(Exception ge) {
-            ge.printStackTrace();
-            throw ge;
-        }
+        this.isCustomerActivityRegistered = true;
     }
 
     @Override
@@ -130,31 +149,7 @@ public class MoneyTransferWorkflowImpl implements MoneyTransferWorkflow {
             System.out.println("Transfer was already completed. No further action required.");
             return;
         }
-        try {
-            saga.addCompensation(moneyTransferActivity::cancelTransfer, senderAcct, receiverAcct);
-            moneyTransferActivity.initiateTransfer(senderAcctNum, receiverAcctNum, amount);
-            this.isTransferCompleted = true;
-            System.out.println("Signal - Transfer completed.");
-        }
-        catch(ActivityFailure e) {
-            System.out.println("Failed to transfer money. Execute saga compensation.");
-            saga.compensate();
-            throw e;
-        }
-        catch(ApplicationFailure ex) {
-            System.out.println("Application Failure.");
-            throw ex;
-        }
-        catch(WorkflowException we) {
-            System.out.println("\n Stack Trace \n" + Throwables.getStackTraceAsString(we));
-            Throwable cause = Throwables.getRootCause(we);
-            System.out.println("\n Root cause: " + cause.getMessage());
-            throw we;
-        }
-        catch(Exception ge) {
-            ge.printStackTrace();
-            throw ge;
-        }
+        this.isTransferCompleted = true;
     }
 
     @Override
@@ -165,7 +160,6 @@ public class MoneyTransferWorkflowImpl implements MoneyTransferWorkflow {
         } else {
             System.out.println("Transfer has not completed yet.");
         }
-
     }
 
 

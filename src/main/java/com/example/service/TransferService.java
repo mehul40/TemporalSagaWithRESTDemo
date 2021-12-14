@@ -21,11 +21,11 @@ public class TransferService {
     @Autowired
     WorkflowClient workflowClient;
 
-    public void startMoneyTransfer(long senderAcctNum, long receiverAcctNum) {
+    public void startMoneyTransfer(long senderAcctNum, long receiverAcctNum, BigDecimal amount) {
 
         try {
             MoneyTransferWorkflow workflow = createWorkflowConnection(senderAcctNum, receiverAcctNum);
-            WorkflowClient.start(workflow::startMoneyTransferWorkflow, senderAcctNum, receiverAcctNum);
+            WorkflowClient.start(workflow::startMoneyTransferWorkflow, senderAcctNum, receiverAcctNum, amount);
         }
         catch (Exception e) {
             throw e;

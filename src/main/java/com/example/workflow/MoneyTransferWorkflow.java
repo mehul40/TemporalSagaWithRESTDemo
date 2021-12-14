@@ -11,7 +11,7 @@ public interface MoneyTransferWorkflow {
     public static final String QUEUE_NAME = "MoneyTransfer";
 
     @WorkflowMethod
-    void startMoneyTransferWorkflow(long senderAcctNum, long receiverAcctNum);
+    void startMoneyTransferWorkflow(long senderAcctNum, long receiverAcctNum, BigDecimal amount);
 
     @SignalMethod
     void signalTransferCompleted(long senderAcctNum, long receiverAcctNum, BigDecimal amount);

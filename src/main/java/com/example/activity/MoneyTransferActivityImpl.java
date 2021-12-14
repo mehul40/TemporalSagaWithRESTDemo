@@ -97,11 +97,11 @@ public class MoneyTransferActivityImpl implements MoneyTransferActivity {
             Customer sender = customerRepository.findByCustomerid(senderAcctNum).get(0);
             Customer receiver = customerRepository.findByCustomerid(receiverAcctNum).get(0);
 
-            String cActivity = "Cancelled transaction to send " + sender.getBalance() + " to " + receiverAcctNum;
+            String cActivity = "Cancelled transaction to send " + amount + " to " + receiverAcctNum + " [ " + receiver.getCustomer_name() + " ] ";
             transactionHistoryRepository.insertTransaction(senderAcctNum, sender.getCustomer_name(), sender.getBalance(), cActivity );
 
-            cActivity = "Rolled back transaction due to failure " + receiver.getBalance() + " from " + sender.getCustomerid() + " - " + sender.getCustomer_name();
-            transactionHistoryRepository.insertTransaction(receiverAcctNum, receiver.getCustomer_name(), sender.getBalance(), cActivity);
+            cActivity = "Rolled back transaction due to failure to receive " + amount + " from " + senderAcctNum + " [ " + sender.getCustomer_name() + " ] ";
+            transactionHistoryRepository.insertTransaction(receiverAcctNum, receiver.getCustomer_name(), receiver.getBalance(), cActivity);
         }
         catch(Saga.CompensationException sce) {
             System.out.println("Compensation Exception received.");

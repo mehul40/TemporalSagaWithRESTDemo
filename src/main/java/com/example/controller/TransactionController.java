@@ -15,7 +15,7 @@ public class TransactionController {
 
     @PostMapping("/startTransaction")
     public void startTransaction(@RequestBody TransferRequest request) {
-        transferService.startMoneyTransfer(request.getSenderAcctNum(), request.getReceiverAcctNum());
+        transferService.startMoneyTransfer(request.getSenderAcctNum(), request.getReceiverAcctNum(), request.getAmount());
     }
 
     @PostMapping("/transfer")
