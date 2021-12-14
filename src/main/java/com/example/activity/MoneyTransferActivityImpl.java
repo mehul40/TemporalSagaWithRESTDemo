@@ -62,8 +62,7 @@ public class MoneyTransferActivityImpl implements MoneyTransferActivity {
             transactionHistoryRepository.insertTransaction(receiverAcctNum, receiver.getCustomer_name(), receiver.getBalance(), cActivity);
         }
         catch(Exception e) {
-            System.out.println(e.getMessage());
-            throw e;
+            throw Activity.wrap(e);
         }
     }
 
