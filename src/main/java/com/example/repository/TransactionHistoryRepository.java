@@ -13,7 +13,7 @@ public class TransactionHistoryRepository {
         this.jdbcTemplate = jdbc;
     }
 
-    public void insertTransaction(long customerId, String name, BigDecimal amount, String activity) {
+    public void insertTransaction(long customerId, String name, Double amount, String activity) {
         String sql = "INSERT INTO transactionhistory(customerid, name, balance, update_timestamp, activity) VALUES(?,?,?,CURRENT_TIMESTAMP,?)";
         jdbcTemplate.update(sql, customerId, name, amount, activity);
     }

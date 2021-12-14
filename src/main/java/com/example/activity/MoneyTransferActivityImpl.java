@@ -53,11 +53,11 @@ public class MoneyTransferActivityImpl implements MoneyTransferActivity {
             customers = customerRepository.findByCustomerid(receiverAcctNum);
             Customer receiver = customers.get(0);
 
-            String cActivity = "Sent " + amount.doubleValue() + " to " + receiver.getCustomerid() + "-" + receiver.getCustomer_name();
-            transactionHistoryRepository.insertTransaction(senderAcctNum, sender.getCustomer_name(), amount, cActivity);
+            String cActivity = "Sent " + amount.doubleValue() + " to " + receiver.getCustomerid() + " , " + receiver.getCustomer_name();
+            transactionHistoryRepository.insertTransaction(senderAcctNum, sender.getCustomer_name(), sender.getBalance() , cActivity);
 
-            cActivity = "Received " + amount.doubleValue() + " from " + sender.getCustomerid() + "-" + sender.getCustomer_name();
-            transactionHistoryRepository.insertTransaction(receiverAcctNum, receiver.getCustomer_name(), amount, cActivity);
+            cActivity = "Received " + amount.doubleValue() + " from " + sender.getCustomerid() + " , " + sender.getCustomer_name();
+            transactionHistoryRepository.insertTransaction(receiverAcctNum, receiver.getCustomer_name(), receiver.getBalance(), cActivity);
         }
         catch(Exception e) {
             System.out.println(e.getMessage());
@@ -95,11 +95,11 @@ public class MoneyTransferActivityImpl implements MoneyTransferActivity {
             Customer sender = customerRepository.findByCustomerid(senderAcctNum).get(0);
             Customer receiver = customerRepository.findByCustomerid(receiverAcctNum).get(0);
 
-            String cActivity = "Cancelled transaction to send " + amount.doubleValue() + " to " + receiverAcctNum;
-            transactionHistoryRepository.insertTransaction(senderAcctNum, sender.getCustomer_name(), amount, cActivity );
+            String cActivity = "Cancelled transaction to send " + sender.getBalance() + " to " + receiverAcctNum;
+            transactionHistoryRepository.insertTransaction(senderAcctNum, sender.getCustomer_name(), sender.getBalance(), cActivity );
 
-            cActivity = "Rolled back transaction due to failure " + amount.doubleValue() + " from " + sender.getCustomerid() + " - " + sender.getCustomer_name();
-            transactionHistoryRepository.insertTransaction(receiverAcctNum, receiver.getCustomer_name(), amount, cActivity);
+            cActivity = "Rolled back transaction due to failure " + receiver.getBalance() + " from " + sender.getCustomerid() + " - " + sender.getCustomer_name();
+            transactionHistoryRepository.insertTransaction(receiverAcctNum, receiver.getCustomer_name(), sender.getBalance(), cActivity);
         }
         catch(Saga.CompensationException sce) {
             System.out.println("Compensation Exception received.");
