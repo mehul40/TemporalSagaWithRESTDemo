@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.domain.Customer;
 import com.google.common.base.Throwables;
 import io.temporal.client.WorkflowClient;
 import io.temporal.client.WorkflowException;
@@ -36,8 +37,10 @@ public class TransferService {
         try {
             MoneyTransferWorkflow workflow = workflowClient.newWorkflowStub(MoneyTransferWorkflow.class, "MoneyTransfer_" + senderAcctNum + "_" + receiverAcctNum);
             workflow.signalBackupCompleted(senderAcctNum, receiverAcctNum);
+
             MoneyTransferWorkflow transferCompleteWorkflow = workflowClient.newWorkflowStub(MoneyTransferWorkflow.class, "MoneyTransfer_" + senderAcctNum + "_" + receiverAcctNum);
             transferCompleteWorkflow.signalTransferCompleted(senderAcctNum, receiverAcctNum, amount);
+
             MoneyTransferWorkflow registerActivityWorkflow = workflowClient.newWorkflowStub(MoneyTransferWorkflow.class, "MoneyTransfer_" + senderAcctNum + "_" + receiverAcctNum);
             registerActivityWorkflow.signalCustomerActivityRegistered(senderAcctNum, receiverAcctNum, amount);
         }
@@ -63,8 +66,12 @@ public class TransferService {
         return workflowClient.newWorkflowStub(MoneyTransferWorkflow.class, options);
     }
 
-    public void completeTransaction(long senderAcctNum, long receiverAcctNum) {
-        MoneyTransferWorkflow workflow = workflowClient.newWorkflowStub(MoneyTransferWorkflow.class, "MoneyTransfer_" + senderAcctNum + "_" + receiverAcctNum);
-        workflow.signalTransactionCompleted(senderAcctNum, receiverAcctNum);
+    public void completeTransaction(long senderAcctNum, long receiverAcctNum, BigDecimal amount) {
+        MoneyTransferWorkflow workflow = workflowClient.newWorkflowStub(MoneyTransferWorkflow.class, "MoneyTransfer_" + senderAcctNum + "_" + receiverAcctNum + "_" + amount);
+        workflow.signalTransactionCompleted(senderAcctNum, receiverAcctNum, amount);
+    }
+
+    public Customer getAccountDetails(long senderAcctNum, long receiverAcctNum, BigDecimal amount) {
+        MoneyTransferWorkflow workflow = workflowClient.newWorkflowStub(MoneyTransferWorkflow.class, "MoneyTransfer_" + senderAcctNum + "_" + receiverAcctNum + "_+ + amount");
     }
 }

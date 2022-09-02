@@ -1,0 +1,4 @@
+openjdk:alpine
+ADD ./build/libs/temporal-springboot-1.0-SNAPSHOT.jar temporal-sprinboot.jar
+EXPOSE 7233
+ENTRYPOINT ["java", "-jar", "/temporal-springboot.jar"]

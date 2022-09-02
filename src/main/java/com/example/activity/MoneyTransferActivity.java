@@ -24,4 +24,7 @@ public interface MoneyTransferActivity {
     @ActivityMethod
     void registerFailedTransaction(long senderAcctNum, long receiverAcctNum, BigDecimal amount);
 
+    @ActivityMethod
+    boolean checkSufficientBalance(long senderAcctNum, BigDecimal amount);
+
 }

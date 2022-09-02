@@ -110,4 +110,15 @@ public class MoneyTransferActivityImpl implements MoneyTransferActivity {
             throw Activity.wrap(e);
         }
     }
+
+    @Override
+    public boolean checkSufficientBalance(long senderAcctNum, BigDecimal amount) {
+        Customer sender = customerRepository.findByCustomerid(senderAcctNum).get(0);
+        double newBalance = sender.getBalance() - amount.doubleValue();
+        if(newBalance < 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 }
